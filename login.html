@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - LibreTV</title>
+    <meta name="description" content="LibreTV登录页面">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://images.icon-icons.com/38/PNG/512/retrotv_5520.png">
+    <link rel="apple-touch-icon" href="https://images.icon-icons.com/38/PNG/512/retrotv_5520.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        :root {
+            --primary-color: #00ccff;       /* 霓虹蓝主色调 */
+            --primary-light: #33d6ff;       /* 浅霓虹蓝变体 */
+            --secondary-color: #0f1622;     /* 深蓝黑背景色 */
+            --accent-color: #ff3c78;        /* 霓虹粉强调色 */
+            --text-color: #e6f2ff;          /* 柔和的蓝白色文本 */
+            --text-muted: #8599b2;          /* 淡蓝灰色次级文本 */
+            --border-color: rgba(0, 204, 255, 0.15);
+            --page-gradient-start: #0f1622; /* 深蓝黑起始色 */
+            --page-gradient-end: #192231;   /* 深靛蓝结束色 */
+            --card-gradient-start: #121b29; /* 卡片起始色 */
+            --card-gradient-end: #1c2939;   /* 卡片结束色 */
+            --card-accent: rgba(0, 204, 255, 0.12); /* 霓虹蓝卡片强调色 */
+            --card-hover-border: rgba(0, 204, 255, 0.5); /* 悬停边框颜色 */
+        }
+        
+        .page-bg {
+            background: linear-gradient(180deg, var(--page-gradient-start), var(--page-gradient-end));
+            min-height: 100vh;
+            /* 柔和赛博点状背景 */
+            background-image: 
+                linear-gradient(180deg, var(--page-gradient-start), var(--page-gradient-end)),
+                radial-gradient(circle at 25px 25px, rgba(0, 204, 255, 0.04) 2px, transparent 3px),
+                radial-gradient(circle at 75px 75px, rgba(255, 60, 120, 0.02) 1px, transparent 2px),
+                radial-gradient(circle at 50px 50px, rgba(150, 255, 250, 0.015) 1px, transparent 2px);
+            background-blend-mode: normal;
+            background-size: cover, 100px 100px, 50px 50px, 75px 75px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-box {
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid #333;
+        }
+        
+        .login-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        
+        .login-input:focus {
+            border-color: #fff;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+        
+        .login-btn {
+            background-image: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
+            transition: all 0.3s ease;
+        }
+        
+        .login-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .info-link {
+            color: #a855f7;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+        
+        .info-link:hover {
+            color: #ec4899;
+        }
+    </style>
+</head>
+<body class="page-bg text-white flex items-center justify-center min-h-screen">
+    <div class="login-box w-full max-w-md p-8 rounded-lg shadow-xl">
+        <div class="text-center mb-8">
+            <div class="flex justify-center items-center mb-4">
+                <svg class="w-10 h-10 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                <h1 class="text-4xl font-bold gradient-text">LibreTV</h1>
+            </div>
+            <p class="text-gray-400">请输入访问密码以继续</p>
+        </div>
+        
+        <div id="errorMessage" class="hidden bg-red-900/50 text-red-200 p-3 rounded-lg mb-4 text-sm"></div>
+        
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-400 mb-1">访问密码</label>
+                <input type="password" id="password" name="password" 
+                       class="login-input w-full px-4 py-3 rounded-lg text-white focus:outline-none" 
+                       placeholder="请输入访问密码" required>
+            </div>
+            
+            <div>
+                <button type="submit" class="login-btn w-full py-3 rounded-lg text-white font-medium shadow-lg">
+                    访问
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // 登录成功，跳转到首页
+                    window.location.href = '/';
+                } else {
+                    // 显示错误信息
+                    errorMessage.textContent = data.message;
+                    errorMessage.classList.remove('hidden');
+                    
+                    // 3秒后隐藏错误信息
+                    setTimeout(() => {
+                        errorMessage.classList.add('hidden');
+                    }, 3000);
+                }
+            } catch (error) {
+                errorMessage.textContent = '登录过程中发生错误，请稍后再试';
+                errorMessage.classList.remove('hidden');
+                console.error('登录错误:', error);
+                
+                // 3秒后隐藏错误信息
+                setTimeout(() => {
+                    errorMessage.classList.add('hidden');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html> 
